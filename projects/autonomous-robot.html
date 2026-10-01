@@ -66,10 +66,31 @@
               alt="Autonomous mobile rover architecture"
               width="3024" height="4032">
           </figure>
-          <div class="full-text prose">
+          <div class="prose">
             <p>
               I divided the system into two computational layers. The ESP32 handles time-sensitive hardware interaction and closed-loop wheel control, while the Jetson runs computationally heavier ROS 2 applications including localization, mapping, and navigation. micro-ROS bridges the microcontroller into the ROS 2 network, allowing the higher-level software to command the drivetrain and consume sensor and control telemetry.
             </p>
+            <p>
+              Aside from wanting better real time control, we wanted to give as much headroom as possible for the Jetson to run the as for mentioned programs, but also a computer vision system for object detection, necessary also for self docking, live stream feed, and also person recognition so our robot could remember people. The computer vision section of the project wasn’t completed, yet throughout the project we planned for it. 
+
+            </p>
+            <p>
+              The Jetson Nano acts as the brain that sends a simple velocity command to the ESP32. The ESP32 is then able to interpret that and run PID to accurately match its wheel speeds to that target velocity. It was a natural separation, where the brain offloads thinking by sending a simple velocity command while the ESP32 works hard to implement them. 
+            </p>
+
+            <p>
+              As a safeguard for the rover (avoid crashing into people and things) the ESP32 turns off motors if connection is ever severed. 
+            </p>
+
+            <p>
+              While the Jetson sends velocity down to the ESP32 most of the data stream is upstream from the micro controller to the Jetson. Using custom ROS messages the ESP32 sends up debugging data such as PI values, current and measured velocity, encoder ticks and so on. 
+            </p>
+            <p>
+              In addition to the debugging pipline its necessary for the ESP32 to send up odometry values for the jetson to be able to localize itself. This includes raw IMU values at 100hz, and wheel odometry at 10 hz which the Jetson later filters and combines. 
+            </p>
+
+
+
       
           </div>
         </section>
